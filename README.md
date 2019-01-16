@@ -2,14 +2,14 @@
 
 ## Overview
 
-This repository shows STM32F7 (ARM Cortex-M7) based USB-MIDI Interface.
-It has 8 MIDI-IN and 8 MIDI-OUT, and is USB MIDI class-compliant.
+This repository shows STM32F7 (ARM Cortex-M7) based  8IN/8OUT USB-MIDI Interface.
+It is USB MIDI class-compliant, so you can add MIDI port without drivers(Windows, iOS, Android, etc...)
 
 The USB-MIDI Class Driver is based on [mimuz-tuch](https://github.com/mimuz/mimuz-tuch) project (c) [D.F.Mac. @TripArts Music](https://github.com/tadfmac).
 
 STM32F7を使用した、USB-MIDIインターフェースです。INを8系統、OUTを8系統実装しています。USB MIDI Classに対応するシステム(Windows, iOS, Android, etc.)に対し、ドライバレスでMIDI入出力ポートを追加できます。
 
-USB MIDI Classドライバは、[D.F.Mac. @TripArts Music](https://github.com/tadfmac)氏作成の[ドライバ](https://github.com/mimuz/mimuz-tuch/tree/master/STM32)を元に、I/F部の改造を行っています。
+USB MIDI Classドライバは、[D.F.Mac. @TripArts Music](https://github.com/tadfmac)氏作成の[ドライバ](https://github.com/mimuz/mimuz-tuch/tree/master/STM32)を元に、I/F部(usbd_midi_if.c/h)の改造を行っています。
 
 ![Sample Image](./hardware/p1.jpg)
 ![Sample Image](./hardware/p2.jpg)
@@ -19,17 +19,33 @@ USB MIDI Classドライバは、[D.F.Mac. @TripArts Music](https://github.com/ta
 * High-Speed MCU (STM32F722VCT)
 * USB MIDI class-compliant
 * MIDI port: 8IN/8OUT
-* MIDI buffer size: 2kB * (8OUT+8IN) = 32kB
+* MIDI buffer size: 2kB * (8IN+8OUT) = 32kB
 
 ## Building Information
 
 ### Making hardware
 
 See [Schematic](./hardware/schematic.pdf).
+CureMIDI8 consist of a mainboard and a MIDI-IN board.
+
+回路図は[こちら](./hardware/schematic.pdf).
+CureMIDI8は、メイン基板(Mainboard)と、拡張基板(MIDI-IN board)に分かれています。
 
 ### Building software
 
-Install [SW4STM32](http://www.openstm32.org/HomePage)(need registration), import [Project files](./software/SW4STM32_project/), and build.
+Install [SW4STM32](http://www.openstm32.org/HomePage)(need registration), import [Project files](./software/SW4STM32_project/). If you have successfully imported, you can build the project without error and the binary file will be created in /SW4STM32_project/Debug/.
+
+[SW4STM32](http://www.openstm32.org/HomePage)をインストールし、[プロジェクトファイル](./software/SW4STM32_project/)をインポートして下さい。インポートに成功していれば、SW4STM32上でプロジェクトをビルドするだけで、/SW4STM32_project/Debug/フォルダにバイナリファイルが生成されるはずです。
+
+## How to Porting
+
+Load CureMIDI8.ioc on [STM32CubeMX (Ver.5.0.1)](https://www.st.com/ja/development-tools/stm32cubemx.html), change the pin assignment, and generate code.
+After code generation, copy usb device driver as described below. You can use ./click_after_code_generation.bat (in Windows).
+
+CureMIDI8.iocを[STM32CubeMX (Ver.5.0.1)](https://www.st.com/ja/development-tools/stm32cubemx.html)で読みこみ、ポートを適宜修正し、コード生成をして下さい。コードを生成後、./template下のUSBドライバを、下記の通り上書きして下さい。上書きは、./click_after_code_generation.batを実行してもOKです。
+
+* ./template/\*.c => ./Src/\*.c
+* ./template/\*.h => ./Inc/\*.h
 
 ## File Location
 
@@ -46,7 +62,7 @@ Vendor ID(VID) and Product ID(PID) in <usbd_desc.c> should be unique pair for ea
 Default VID 0x1209 and PID 0x0001 is experimental IDs from [http://pid.codes](http://pid.codes) .When distributing or selling, you must get your own IDs, and change to your own IDs in order to avoid conflicting to other USB devices.
 
 USBのVendor ID(VID)とProduct ID(PID)は、<usbd_desc.c>内に記述します。
-デフォルトのVID(0x1209)/PID(0x0001)ペアは、[http://pid.codes](http://pid.codes)で定められている実験用IDです。そのため、本機器を配布したり販売したりする場合には、別途固有のIDペアを取得し、書き換えてご使用下さい。
+デフォルトのVID(0x1209)/PID(0x0001)ペアは、[http://pid.codes](http://pid.codes)で定められている実験用IDです。そのため、本機器を配布したり販売したりする場合には、別途固有のIDペアを取得し、書き換えてご使用いただく必要があります。
 
 ## References
 
