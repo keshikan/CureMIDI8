@@ -25,7 +25,7 @@ USB MIDI Classドライバは、[D.F.Mac. @TripArts Music](https://github.com/ta
 
 ### Making hardware
 
-See [Schematic](./hardware/schematic.pdf).
+See [Schematic](./hardware/schematic.pdf), [KiCad Source](./hardware/kicad_source).
 CureMIDI8 consist of a mainboard and a MIDI-IN board.
 
 回路図は[こちら](./hardware/schematic.pdf).
