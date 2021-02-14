@@ -57,11 +57,20 @@
   * ../USB_DEVICE/App/iflib
   * ![Sample Image](./png/p4.png)
 
-## 使い方
+### ドライバの設定項目
 
-* MIDIのポート数設定：/Middlewares/USBMIDI/にあるusbd_midi.c/h
-  * ヘッダ内の定義を変えるだけでポート数が変更できる！･･･という訳では無いので注意(要改善)
-  * 変更する際は、usbd_midi.c内のDevice Configuration Descriptorを正しく記述する必要がある。詳細は、[USB MIDI Devices 1.0(仕様書)](https://usb.org/sites/default/files/midi10.pdf)や、[こちらのページ](https://pcm1723.hateblo.jp/entry/20150106/1420519745)を参照
-* usbd_midi_if.h, usb_device.hをinclude
-* 初期化：MX_USB_MIDI_INIT();とmidiInit();
-* (以下追記中。サンプルを見た方が早いかも)
+その他、環境に合わせて以下の項目を設定する。
+
+* MIDIのポート数設定：/Middlewares/USBMIDI/usbd_midi.h
+  * MIDI_OUT_JACK_NUM・MIDI_IN_JACK_NUMが、それぞれMIDI OUT/INのポート数に対応している。ただし、この定義変更だけでは正常に動作しない(要改善)
+  * 上記に加え、usbd_midi.c内のDevice Configuration Descriptorを正しく記述する必要がある。詳細は、[USB MIDI Devices 1.0(仕様書)](https://usb.org/sites/default/files/midi10.pdf)や、[こちらのページ](https://pcm1723.hateblo.jp/entry/20150106/1420519745)を参照
+
+* MIDIバッファサイズの設定：/USB_DEVICE/App/iflib/usbd_midi_if.h
+  * UM_MIDI_BUFFER_LENGTH で、1ポートあたりのMIDIバッファサイズを指定する。デフォルトは2048[byte]。2のべき乗に設定する。
+
+### 使い方
+
+* usbd_midi_if.h, usb_device.hをincludeする。
+* MX_USB_MIDI_INIT()とmidiInit()を呼ぶことで、ドライバが初期化される。
+* デバイス側がホスト側より受信したデータは、自動的に内部の受信用FIFOバッファにpushされる。このバッファからは、midiGetFromUsbRx(port, &dat)で1バイトずつ、順に取り出すことができる。portはポート番号(0から始まる)。datにデータが1byte分入る。データが取り出せない(バッファが空)の場合はFUNC_ERRORを返す。
+* デバイス側がホスト側に対してデータを送信したいときは、midiSetFromJackRx(port, &dat)で、1バイトずつ内部の送信用FIFOバッファにpushすることができる。バッファの内容は、midiInProcess()を呼ぶタイミングでホストに送信される。
