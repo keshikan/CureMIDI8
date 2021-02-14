@@ -243,37 +243,37 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+  /* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
+  /* USER CODE BEGIN 3 */
 	  //Wait USB configuration when USB connection error has occurred.
-	 	  if(USBD_STATE_CONFIGURED != hUsbDeviceFS.dev_state){
-	 		  while(1){
-	 			  HAL_GPIO_WritePin(LED_POW_GPIO, LED_POW_PIN, SET);
-	 			  HAL_Delay(200);
-	 			  HAL_GPIO_WritePin(LED_POW_GPIO, LED_POW_PIN, RESET);
-	 			  HAL_Delay(200);
+	  if(USBD_STATE_CONFIGURED != hUsbDeviceFS.dev_state){
+		  while(1){
+			  HAL_GPIO_WritePin(LED_POW_GPIO, LED_POW_PIN, SET);
+			  HAL_Delay(200);
+			  HAL_GPIO_WritePin(LED_POW_GPIO, LED_POW_PIN, RESET);
+			  HAL_Delay(200);
 
-	 			  if(USBD_STATE_CONFIGURED == hUsbDeviceFS.dev_state){
-	 				  HAL_GPIO_WritePin(LED_POW_GPIO, LED_POW_PIN, SET);
-	 				  break;
-	 			  }
-	 		  }
-	 	  }
+			  if(USBD_STATE_CONFIGURED == hUsbDeviceFS.dev_state){
+				  HAL_GPIO_WritePin(LED_POW_GPIO, LED_POW_PIN, SET);
+				  break;
+			  }
+		  }
+	  }
 
-	 	  //MIDI-OUT: [USB-MIDI IN] to [MIDI JACK OUT]
-	 		  for(uint32_t cable_num=0; cable_num<MIDI_OUT_JACK_NUM; cable_num++){
-	 			  if( FUNC_SUCCESS == midiGetFromUsbRx(cable_num, &uart_tx_dat) ){
-	 				  while(!isUartReady[cable_num]);
-	 				  sendUart(cable_num, &uart_tx_dat);
-	 			  }
-	 		  }
+	  //MIDI-OUT: [USB-MIDI IN] to [MIDI JACK OUT]
+	  for(uint32_t cable_num=0; cable_num<MIDI_OUT_JACK_NUM; cable_num++){
+		  if( FUNC_SUCCESS == midiGetFromUsbRx(cable_num, &uart_tx_dat) ){
+			  while(!isUartReady[cable_num]);
+			  sendUart(cable_num, &uart_tx_dat);
+		  }
+	  }
 
-	 	//MIDI-IN: [MIDI JACK IN] to [USB-MIDI OUT]
-	 	midiInProcess();
-	 	ledMain();
+	  //MIDI-IN: [MIDI JACK IN] to [USB-MIDI OUT]
+	  midiInProcess();
+	  ledMain();
 
-   }
+  }
   /* USER CODE END 3 */
 }
 
